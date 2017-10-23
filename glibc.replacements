@@ -6,6 +6,9 @@ to fb:     #define __PTHREAD_SPINS 0, 0
 convert c: #define __PTHREAD_RWLOCK_ELISION_EXTRA 0, { 0, 0, 0, 0, 0, 0, 0 }
 to fb:     #define __PTHREAD_RWLOCK_ELISION_EXTRA 0, { 0, 0, 0, 0, 0, 0, 0 }
 
+convert c: #define __REDIRECT(name, proto, alias) name proto __asm__ (__ASMNAME (#alias))
+to fb:      #define __REDIRECT(name, proto, alias) name proto asm__ (__ASMNAME (#alias))
+
 convert c: typedef int         int8_t __attribute__ ((__mode__ (__QI__)));
 to c:      typedef signed char int8_t;
 

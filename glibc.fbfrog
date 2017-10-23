@@ -6,6 +6,8 @@
 -define HAVE_ASM_WEAK_DIRECTIVE 1
 -define HAVE_ASM_WEAKEXT_DIRECTIVE 1
 
+-define _FILE_OFFSET_BITS 64
+
 # pthread.h uses __attribute__((regparm)) on x86 which FB doesn't support
 -removedefine __cleanup_fct_attribute
 -removedefine pthread_cleanup_push
@@ -59,6 +61,26 @@
 -removedefine __intN_t
 -removedefine __u_intN_t
 -removedefine __*_DEFINED__
+
+# __REDIRECT aliases a function using asm, without it a #define is used
+#-renamedefine __REDIRECT ___REDIRECT
+#
+#-define __REDIRECT
+#-removedefine __REDIRECT
+-noexpand __REDIRECT
+-noexpand __REDIRECT_NTH
+# -ifndefdecl __REDIRECT
+# -define __REDIRECT 
+-rename open _open
+-rename close _close
+-rename read _read
+-rename rmdir _rmdir
+-rename chdir _chdir
+
+# -define hidden_proto
+# -undefbeforedecl hidden_proto
+# -remove libc_hidden_proto
+-noexpand libc_hidden_proto
 
 -removeinclude features.h
 -rename bits/pthreadtypes.h crt/bits/pthreadtypes.bi

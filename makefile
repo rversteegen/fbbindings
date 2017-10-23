@@ -694,21 +694,26 @@ crt-linux: tools
 		-case x86 \
 			-incdir extracted/$(GLIBC)/sysdeps/x86 \
 			-incdir extracted/$(GLIBC)/sysdeps/wordsize-32 \
+			-incdir extracted/$(GLIBC)/sysdeps/unix/sysv/linux/x86 \
 			-incdir extracted/$(LINUX)/arch/x86/include/uapi \
 		-case x86_64 \
 			-incdir extracted/$(GLIBC)/sysdeps/x86_64 \
 			-incdir extracted/$(GLIBC)/sysdeps/wordsize-64 \
 			-incdir extracted/$(GLIBC)/sysdeps/x86 \
+			-incdir extracted/$(GLIBC)/sysdeps/unix/sysv/linux/x86_64 \
+			-incdir extracted/$(GLIBC)/sysdeps/unix/sysv/linux/x86 \
 			-incdir extracted/$(LINUX)/arch/x86/include/uapi \
 		-case arm \
 			-incdir extracted/$(GLIBC)/sysdeps/arm \
 			-incdir extracted/$(GLIBC)/sysdeps/arm/nptl \
 			-incdir extracted/$(GLIBC)/sysdeps/wordsize-32 \
+			-incdir extracted/$(GLIBC)/sysdeps/unix/sysv/linux/arm \
 			-incdir extracted/$(LINUX)/arch/arm/include/uapi \
 		-case aarch64 \
 			-incdir extracted/$(GLIBC)/sysdeps/aarch64 \
 			-incdir extracted/$(GLIBC)/sysdeps/aarch64/nptl \
 			-incdir extracted/$(GLIBC)/sysdeps/wordsize-64 \
+			-incdir extracted/$(GLIBC)/sysdeps/unix/sysv/linux/aarch64 \
 			-incdir extracted/$(LINUX)/arch/arm64/include/uapi \
 		-endselect \
 		-incdir extracted/$(GLIBC)/sysdeps/unix/sysv/linux \
@@ -725,6 +730,8 @@ crt-linux: tools
 		-include locale/locale.h \
 		-include locale/xlocale.h \
 		-include sys/timex.h \
+		-include fcntl.h \
+		-include unistd.h \
 		extracted/$(GLIBC)/sysdeps/nptl/pthread.h \
 		-emit '*/asm/sigcontext.h'    inc/crt/linux/asm/sigcontext.bi \
 		-emit '*/bits/pthreadtypes.h' inc/crt/bits/pthreadtypes.bi \
@@ -738,6 +745,8 @@ crt-linux: tools
 		-emit '*/sys/time.h'          inc/crt/sys/linux/time.bi \
 		-emit '*/sys/timex.h'         inc/crt/sys/linux/timex.bi \
 		-emit '*/sys/types.h'         inc/crt/sys/linux/types.bi \
+		-emit '*/fcntl.h'             inc/crt/linux/fcntl.bi \
+		-emit '*/unistd.h'            inc/crt/linux/unistd.bi \
 		-emit '*/locale.h'            inc/crt/linux/locale.bi \
 		-emit '*/pthread.h'           inc/crt/pthread.bi \
 		-emit '*/sched.h'             inc/crt/sched.bi \

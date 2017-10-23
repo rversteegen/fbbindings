@@ -26,6 +26,9 @@
 #include once "crt/bits/types.bi"
 #include once "crt/time.bi"
 #include once "crt/stddef.bi"
+#include once "endian.bi"
+#include once "sys/select.bi"
+#include once "sys/sysmacros.bi"
 #include once "crt/bits/pthreadtypes.bi"
 
 const _SYS_TYPES_H = 1
@@ -37,14 +40,14 @@ type quad_t as __quad_t
 type u_quad_t as __u_quad_t
 type fsid_t as __fsid_t
 type loff_t as __loff_t
-type ino_t as __ino_t
+type ino_t as __ino64_t
 type ino64_t as __ino64_t
 type dev_t as __dev_t
 type gid_t as __gid_t
 type mode_t as __mode_t
 type nlink_t as __nlink_t
 type uid_t as __uid_t
-type off_t as __off_t
+type off_t as __off64_t
 type off64_t as __off64_t
 type pid_t as __pid_t
 type id_t as __id_t
@@ -83,9 +86,9 @@ type uint as ulong
 #endif
 type register_t as uinteger
 type blksize_t as __blksize_t
-type blkcnt_t as __blkcnt_t
-type fsblkcnt_t as __fsblkcnt_t
-type fsfilcnt_t as __fsfilcnt_t
+type blkcnt_t as __blkcnt64_t
+type fsblkcnt_t as __fsblkcnt64_t
+type fsfilcnt_t as __fsfilcnt64_t
 type blkcnt64_t as __blkcnt64_t
 type fsblkcnt64_t as __fsblkcnt64_t
 type fsfilcnt64_t as __fsfilcnt64_t

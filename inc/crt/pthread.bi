@@ -23,17 +23,15 @@
 
 #pragma once
 
-#ifndef __FB_UNIX__
-	#error "target not supported; this header is for GNU/Linux glibc"
-#endif
-
 #if defined(__FB_64BIT__) and (not defined(__FB_ARM__))
 	#include once "crt/long.bi"
 #endif
 
+#include once "endian.bi"
 #include once "crt/sched.bi"
 #include once "crt/time.bi"
 #include once "crt/bits/pthreadtypes.bi"
+#include once "bits/setjmp.bi"
 #include once "crt/bits/wordsize.bi"
 
 extern "C"
@@ -229,6 +227,7 @@ end type
 	'' TODO: extern void __pthread_unwind_next (__pthread_unwind_buf_t *__buf) __attribute__ ((__noreturn__)) __attribute__ ((__weak__)) ;
 #endif
 
+declare function __sigsetjmp(byval __env as __jmp_buf_tag ptr, byval __savemask as long) as long
 declare function pthread_mutex_init(byval __mutex as pthread_mutex_t ptr, byval __mutexattr as const pthread_mutexattr_t ptr) as long
 declare function pthread_mutex_destroy(byval __mutex as pthread_mutex_t ptr) as long
 declare function pthread_mutex_trylock(byval __mutex as pthread_mutex_t ptr) as long

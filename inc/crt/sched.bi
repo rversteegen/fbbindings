@@ -24,10 +24,6 @@
 
 #pragma once
 
-#ifndef __FB_UNIX__
-	#error "target not supported; this header is for GNU/Linux glibc"
-#endif
-
 #include once "crt/bits/types.bi"
 #include once "crt/stddef.bi"
 #include once "crt/time.bi"
@@ -46,7 +42,7 @@ declare function sched_get_priority_max(byval __algorithm as long) as long
 declare function sched_get_priority_min(byval __algorithm as long) as long
 declare function sched_rr_get_interval(byval __pid as __pid_t, byval __t as timespec ptr) as long
 
-#define CPU_SETSIZE __CPU_SETSIZE
+const CPU_SETSIZE = __CPU_SETSIZE
 #define CPU_ALLOC_SIZE(count) __CPU_ALLOC_SIZE(count)
 #define CPU_ALLOC(count) __CPU_ALLOC(count)
 #define CPU_FREE(cpuset) __CPU_FREE(cpuset)
@@ -56,9 +52,9 @@ declare function sched_getaffinity(byval __pid as __pid_t, byval __cpusetsize as
 declare function __sched_setparam(byval __pid as __pid_t, byval __param as const sched_param ptr) as long
 declare function __sched_getparam(byval __pid as __pid_t, byval __param as sched_param ptr) as long
 declare function __sched_setscheduler(byval __pid as __pid_t, byval __policy as long, byval __param as const sched_param ptr) as long
-declare function __sched_getscheduler(byval __pid as __pid_t) as long
+'' TODO: libc_hidden_proto (__sched_setscheduler)extern int __sched_getscheduler (__pid_t __pid);
 declare function __sched_yield() as long
-declare function __sched_get_priority_max(byval __algorithm as long) as long
+'' TODO: libc_hidden_proto (__sched_yield)extern int __sched_get_priority_max (int __algorithm);
 declare function __sched_get_priority_min(byval __algorithm as long) as long
 declare function __sched_rr_get_interval(byval __pid as __pid_t, byval __t as timespec ptr) as long
 declare function __clone(byval __fn as function(byval __arg as any ptr) as long, byval __child_stack as any ptr, byval __flags as long, byval __arg as any ptr, ...) as long

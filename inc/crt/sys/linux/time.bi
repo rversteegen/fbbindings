@@ -26,6 +26,7 @@
 #include once "crt/bits/types.bi"
 #include once "crt/time.bi"
 #include once "crt/bits/time.bi"
+#include once "sys/select.bi"
 
 extern "C"
 
@@ -59,10 +60,6 @@ enum
 	ITIMER_VIRTUAL = 1
 	ITIMER_PROF = 2
 end enum
-
-#define ITIMER_REAL ITIMER_REAL
-#define ITIMER_VIRTUAL ITIMER_VIRTUAL
-#define ITIMER_PROF ITIMER_PROF
 
 type itimerval
 	it_interval as timeval
@@ -99,5 +96,15 @@ declare function futimesat(byval __fd as long, byval __file as const zstring ptr
 		end if
 	end scope
 #endmacro
+
+#if defined(__FB_64BIT__) and defined(__FB_ARM__)
+	declare function __gettimeofday(byval __tv as timeval ptr, byval __tz as timezone ptr) as long
+	'' TODO: libc_hidden_proto (__gettimeofday)libc_hidden_proto (gettimeofday)extern int __settimeofday (const struct timeval *__tv, const struct timezone *__tz);
+	declare function __adjtime(byval __delta as const timeval ptr, byval __olddelta as timeval ptr) as long
+	declare function __getitimer(byval __which as __itimer_which, byval __value as itimerval ptr) as long
+	declare function __setitimer(byval __which as __itimer_which, byval __new as const itimerval ptr, byval __old as itimerval ptr) as long
+	declare function __utimes(byval __file as const zstring ptr, byval __tvp as const timeval ptr) as long
+	declare function __futimes(byval fd as long, byval tvp as const timeval ptr) as long
+#endif
 
 end extern

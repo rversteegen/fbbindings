@@ -23,12 +23,13 @@
 
 #pragma once
 
-#ifndef __FB_UNIX__
-	#error "target not supported; this header is for GNU/Linux glibc"
-#endif
-
 #include once "crt/long.bi"
-#include once "crt/bits/wordsize.bi"
+
+#ifdef __FB_ARM__
+	#include once "endian.bi"
+#else
+	#include once "crt/bits/wordsize.bi"
+#endif
 
 const _BITS_PTHREADTYPES_H = 1
 

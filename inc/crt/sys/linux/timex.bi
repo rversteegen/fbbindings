@@ -49,11 +49,11 @@ const TIME_DEL = 2
 const TIME_OOP = 3
 const TIME_WAIT = 4
 const TIME_ERROR = 5
-#define TIME_BAD TIME_ERROR
+const TIME_BAD = TIME_ERROR
 const MAXTC = 6
 declare function __adjtimex(byval __ntx as timex ptr) as long
 declare function adjtimex(byval __ntx as timex ptr) as long
-'' TODO: extern int ntp_gettime (struct ntptimeval *__ntv) __asm__ ("" "") __attribute__ ((__nothrow__));
+'' TODO: extern int __REDIRECT_NTH (ntp_gettime, (struct ntptimeval *__ntv), ntp_gettimex);
 declare function ntp_adjtime(byval __tntx as timex ptr) as long
 
 end extern

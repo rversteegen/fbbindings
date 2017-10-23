@@ -28,7 +28,6 @@
 #include once "crt/bits/wordsize.bi"
 
 const _BITS_TYPES_H = 1
-type __u_char as ubyte
 type __u_short as ushort
 type __u_int as ulong
 type __u_long as culong

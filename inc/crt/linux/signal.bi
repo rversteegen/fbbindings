@@ -27,8 +27,13 @@
 #include once "crt/bits/types.bi"
 #include once "crt/time.bi"
 #include once "crt/bits/wordsize.bi"
-#include once "crt/linux/asm/sigcontext.bi"
+
+#ifdef __FB_ARM__
+	#include once "crt/linux/asm/sigcontext.bi"
+#endif
+
 #include once "crt/stddef.bi"
+#include once "sys/ucontext.bi"
 #include once "crt/bits/pthreadtypes.bi"
 
 extern "C"
@@ -78,8 +83,8 @@ const SIGPIPE = 13
 const SIGALRM = 14
 const SIGTERM = 15
 const SIGSTKFLT = 16
-#define SIGCLD SIGCHLD
 const SIGCHLD = 17
+const SIGCLD = SIGCHLD
 const SIGCONT = 18
 const SIGSTOP = 19
 const SIGTSTP = 20
@@ -91,8 +96,8 @@ const SIGXFSZ = 25
 const SIGVTALRM = 26
 const SIGPROF = 27
 const SIGWINCH = 28
-#define SIGPOLL SIGIO
 const SIGIO = 29
+const SIGPOLL = SIGIO
 const SIGPWR = 30
 const SIGSYS = 31
 const SIGUNUSED = 31
@@ -100,7 +105,7 @@ const _NSIG = 65
 #define SIGRTMIN __libc_current_sigrtmin()
 #define SIGRTMAX __libc_current_sigrtmax()
 const __SIGRTMIN = 32
-#define __SIGRTMAX (_NSIG - 1)
+const __SIGRTMAX = _NSIG - 1
 const __have_sigval_t = 1
 
 union sigval
@@ -116,6 +121,10 @@ const __SI_MAX_SIZE = 128
 	#define __SI_PAD_SIZE ((__SI_MAX_SIZE / sizeof(long)) - 4)
 #else
 	#define __SI_PAD_SIZE ((__SI_MAX_SIZE / sizeof(long)) - 3)
+#endif
+
+#ifndef __FB_ARM__
+	type __sigchld_clock_t as __clock_t
 #endif
 
 type siginfo_t__sifields__kill
@@ -139,8 +148,14 @@ type siginfo_t__sifields__sigchld
 	si_pid as __pid_t
 	si_uid as __uid_t
 	si_status as long
-	si_utime as __clock_t
-	si_stime as __clock_t
+
+	#ifdef __FB_ARM__
+		si_utime as __clock_t
+		si_stime as __clock_t
+	#else
+		si_utime as __sigchld_clock_t
+		si_stime as __sigchld_clock_t
+	#endif
 end type
 
 type siginfo_t__sifields__sigfault
@@ -212,16 +227,6 @@ enum
 	SI_KERNEL = &h80
 end enum
 
-#define SI_ASYNCNL SI_ASYNCNL
-#define SI_TKILL SI_TKILL
-#define SI_SIGIO SI_SIGIO
-#define SI_ASYNCIO SI_ASYNCIO
-#define SI_MESGQ SI_MESGQ
-#define SI_TIMER SI_TIMER
-#define SI_QUEUE SI_QUEUE
-#define SI_USER SI_USER
-#define SI_KERNEL SI_KERNEL
-
 enum
 	ILL_ILLOPC = 1
 	ILL_ILLOPN
@@ -232,15 +237,6 @@ enum
 	ILL_COPROC
 	ILL_BADSTK
 end enum
-
-#define ILL_ILLOPC ILL_ILLOPC
-#define ILL_ILLOPN ILL_ILLOPN
-#define ILL_ILLADR ILL_ILLADR
-#define ILL_ILLTRP ILL_ILLTRP
-#define ILL_PRVOPC ILL_PRVOPC
-#define ILL_PRVREG ILL_PRVREG
-#define ILL_COPROC ILL_COPROC
-#define ILL_BADSTK ILL_BADSTK
 
 enum
 	FPE_INTDIV = 1
@@ -253,22 +249,10 @@ enum
 	FPE_FLTSUB
 end enum
 
-#define FPE_INTDIV FPE_INTDIV
-#define FPE_INTOVF FPE_INTOVF
-#define FPE_FLTDIV FPE_FLTDIV
-#define FPE_FLTOVF FPE_FLTOVF
-#define FPE_FLTUND FPE_FLTUND
-#define FPE_FLTRES FPE_FLTRES
-#define FPE_FLTINV FPE_FLTINV
-#define FPE_FLTSUB FPE_FLTSUB
-
 enum
 	SEGV_MAPERR = 1
 	SEGV_ACCERR
 end enum
-
-#define SEGV_MAPERR SEGV_MAPERR
-#define SEGV_ACCERR SEGV_ACCERR
 
 enum
 	BUS_ADRALN = 1
@@ -278,19 +262,10 @@ enum
 	BUS_MCEERR_AO
 end enum
 
-#define BUS_ADRALN BUS_ADRALN
-#define BUS_ADRERR BUS_ADRERR
-#define BUS_OBJERR BUS_OBJERR
-#define BUS_MCEERR_AR BUS_MCEERR_AR
-#define BUS_MCEERR_AO BUS_MCEERR_AO
-
 enum
 	TRAP_BRKPT = 1
 	TRAP_TRACE
 end enum
-
-#define TRAP_BRKPT TRAP_BRKPT
-#define TRAP_TRACE TRAP_TRACE
 
 enum
 	CLD_EXITED = 1
@@ -301,13 +276,6 @@ enum
 	CLD_CONTINUED
 end enum
 
-#define CLD_EXITED CLD_EXITED
-#define CLD_KILLED CLD_KILLED
-#define CLD_DUMPED CLD_DUMPED
-#define CLD_TRAPPED CLD_TRAPPED
-#define CLD_STOPPED CLD_STOPPED
-#define CLD_CONTINUED CLD_CONTINUED
-
 enum
 	POLL_IN = 1
 	POLL_OUT
@@ -317,12 +285,6 @@ enum
 	POLL_HUP
 end enum
 
-#define POLL_IN POLL_IN
-#define POLL_OUT POLL_OUT
-#define POLL_MSG POLL_MSG
-#define POLL_ERR POLL_ERR
-#define POLL_PRI POLL_PRI
-#define POLL_HUP POLL_HUP
 const __have_sigevent_t = 1
 const __SIGEV_MAX_SIZE = 64
 
@@ -370,12 +332,7 @@ enum
 	SIGEV_THREAD_ID = 4
 end enum
 
-#define SIGEV_SIGNAL SIGEV_SIGNAL
-#define SIGEV_NONE SIGEV_NONE
-#define SIGEV_THREAD SIGEV_THREAD
-#define SIGEV_THREAD_ID SIGEV_THREAD_ID
 type __sighandler_t as sub(byval as long)
-
 declare function __sysv_signal(byval __sig as long, byval __handler as __sighandler_t) as __sighandler_t
 declare function sysv_signal(byval __sig as long, byval __handler as __sighandler_t) as __sighandler_t
 declare function signal(byval __sig as long, byval __handler as __sighandler_t) as __sighandler_t
@@ -392,7 +349,7 @@ declare function sigpause alias "__xpg_sigpause"(byval __sig as long) as long
 declare function sigblock(byval __mask as long) as long
 declare function sigsetmask(byval __mask as long) as long
 declare function siggetmask() as long
-#define NSIG _NSIG
+const NSIG = _NSIG
 type sighandler_t as __sighandler_t
 type sig_t as __sighandler_t
 declare function sigemptyset(byval __set as sigset_t ptr) as long
@@ -426,9 +383,9 @@ const SA_RESTART = &h10000000
 const SA_NODEFER = &h40000000
 const SA_RESETHAND = &h80000000
 const SA_INTERRUPT = &h20000000
-#define SA_NOMASK SA_NODEFER
-#define SA_ONESHOT SA_RESETHAND
-#define SA_STACK SA_ONSTACK
+const SA_NOMASK = SA_NODEFER
+const SA_ONESHOT = SA_RESETHAND
+const SA_STACK = SA_ONSTACK
 const SIG_BLOCK = 0
 const SIG_UNBLOCK = 1
 const SIG_SETMASK = 2
@@ -443,7 +400,175 @@ declare function sigtimedwait(byval __set as const sigset_t ptr, byval __info as
 declare function sigqueue(byval __pid as __pid_t, byval __sig as long, byval __val as const sigval) as long
 extern _sys_siglist(0 to 64) as const zstring const ptr
 extern sys_siglist(0 to 64) as const zstring const ptr
-#define sigcontext_struct sigcontext
+
+#ifndef __FB_ARM__
+	const _BITS_SIGCONTEXT_H = 1
+	const FP_XSTATE_MAGIC1 = &h46505853u
+	const FP_XSTATE_MAGIC2 = &h46505845u
+	#define FP_XSTATE_MAGIC2_SIZE sizeof(FP_XSTATE_MAGIC2)
+
+	type _fpx_sw_bytes
+		magic1 as __uint32_t
+		extended_size as __uint32_t
+		xstate_bv as __uint64_t
+		xstate_size as __uint32_t
+		padding(0 to 6) as __uint32_t
+	end type
+
+	type _fpreg
+		significand(0 to 3) as ushort
+		exponent as ushort
+	end type
+
+	type _fpxreg
+		significand(0 to 3) as ushort
+		exponent as ushort
+		padding(0 to 2) as ushort
+	end type
+
+	type _xmmreg
+		element(0 to 3) as __uint32_t
+	end type
+
+	type _fpstate
+		#if (not defined(__FB_64BIT__)) and (not defined(__FB_ARM__))
+			cw as __uint32_t
+			sw as __uint32_t
+			tag as __uint32_t
+			ipoff as __uint32_t
+			cssel as __uint32_t
+			dataoff as __uint32_t
+			datasel as __uint32_t
+			_st(0 to 7) as _fpreg
+			status as ushort
+			magic as ushort
+			_fxsr_env(0 to 5) as __uint32_t
+		#elseif defined(__FB_64BIT__) and (not defined(__FB_ARM__))
+			cwd as __uint16_t
+			swd as __uint16_t
+			ftw as __uint16_t
+			fop as __uint16_t
+			rip as __uint64_t
+			rdp as __uint64_t
+		#endif
+
+		mxcsr as __uint32_t
+
+		#if (not defined(__FB_64BIT__)) and (not defined(__FB_ARM__))
+			reserved as __uint32_t
+			_fxsr_st(0 to 7) as _fpxreg
+			_xmm(0 to 7) as _xmmreg
+			padding(0 to 55) as __uint32_t
+		#elseif defined(__FB_64BIT__) and (not defined(__FB_ARM__))
+			mxcr_mask as __uint32_t
+			_st(0 to 7) as _fpxreg
+			_xmm(0 to 15) as _xmmreg
+			padding(0 to 23) as __uint32_t
+		#endif
+	end type
+#endif
+
+#if (not defined(__FB_64BIT__)) and (not defined(__FB_ARM__))
+	const X86_FXSR_MAGIC = &h0000
+#endif
+
+#ifndef __FB_ARM__
+	type sigcontext
+		#if defined(__FB_64BIT__) and (not defined(__FB_ARM__))
+			r8 as __uint64_t
+			r9 as __uint64_t
+			r10 as __uint64_t
+			r11 as __uint64_t
+			r12 as __uint64_t
+			r13 as __uint64_t
+			r14 as __uint64_t
+			r15 as __uint64_t
+			rdi as __uint64_t
+			rsi as __uint64_t
+			rbp as __uint64_t
+			rbx as __uint64_t
+			rdx as __uint64_t
+			rax as __uint64_t
+			rcx as __uint64_t
+			rsp as __uint64_t
+			rip as __uint64_t
+			eflags as __uint64_t
+			cs as ushort
+		#endif
+
+		gs as ushort
+
+		#if (not defined(__FB_64BIT__)) and (not defined(__FB_ARM__))
+			__gsh as ushort
+		#endif
+
+		fs as ushort
+
+		#if (not defined(__FB_64BIT__)) and (not defined(__FB_ARM__))
+			__fsh as ushort
+			es as ushort
+			__esh as ushort
+			ds as ushort
+			__dsh as ushort
+			edi as culong
+			esi as culong
+			ebp as culong
+			esp as culong
+			ebx as culong
+			edx as culong
+			ecx as culong
+			eax as culong
+			trapno as culong
+			err as culong
+			eip as culong
+			cs as ushort
+			__csh as ushort
+			eflags as culong
+			esp_at_signal as culong
+			ss as ushort
+			__ssh as ushort
+			fpstate as _fpstate ptr
+			oldmask as culong
+			cr2 as culong
+		#elseif defined(__FB_64BIT__) and (not defined(__FB_ARM__))
+			__pad0 as ushort
+			err as __uint64_t
+			trapno as __uint64_t
+			oldmask as __uint64_t
+			cr2 as __uint64_t
+
+			union
+				fpstate as _fpstate ptr
+				__fpstate_word as __uint64_t
+			end union
+
+			__reserved1(0 to 7) as __uint64_t
+		#endif
+	end type
+#endif
+
+#if (not defined(__FB_64BIT__)) and (not defined(__FB_ARM__))
+	type sigcontext_struct as sigcontext
+#endif
+
+#ifndef __FB_ARM__
+	type _xsave_hdr
+		xstate_bv as __uint64_t
+		reserved1(0 to 1) as __uint64_t
+		reserved2(0 to 4) as __uint64_t
+	end type
+
+	type _ymmh_state
+		ymmh_space(0 to 63) as __uint32_t
+	end type
+
+	type _xstate
+		fpstate as _fpstate
+		xstate_hdr as _xsave_hdr
+		ymmh as _ymmh_state
+	end type
+#endif
+
 declare function sigreturn(byval __scp as sigcontext ptr) as long
 declare function siginterrupt(byval __sig as long, byval __interrupt as long) as long
 
@@ -457,8 +582,6 @@ enum
 	SS_DISABLE
 end enum
 
-#define SS_ONSTACK SS_ONSTACK
-#define SS_DISABLE SS_DISABLE
 const MINSIGSTKSZ = 2048
 const SIGSTKSZ = 8192
 

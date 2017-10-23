@@ -44,19 +44,19 @@ const __LC_ADDRESS = 9
 const __LC_TELEPHONE = 10
 const __LC_MEASUREMENT = 11
 const __LC_IDENTIFICATION = 12
-#define LC_CTYPE __LC_CTYPE
-#define LC_NUMERIC __LC_NUMERIC
-#define LC_TIME __LC_TIME
-#define LC_COLLATE __LC_COLLATE
-#define LC_MONETARY __LC_MONETARY
-#define LC_MESSAGES __LC_MESSAGES
-#define LC_ALL __LC_ALL
-#define LC_PAPER __LC_PAPER
-#define LC_NAME __LC_NAME
-#define LC_ADDRESS __LC_ADDRESS
-#define LC_TELEPHONE __LC_TELEPHONE
-#define LC_MEASUREMENT __LC_MEASUREMENT
-#define LC_IDENTIFICATION __LC_IDENTIFICATION
+const LC_CTYPE = __LC_CTYPE
+const LC_NUMERIC = __LC_NUMERIC
+const LC_TIME = __LC_TIME
+const LC_COLLATE = __LC_COLLATE
+const LC_MONETARY = __LC_MONETARY
+const LC_MESSAGES = __LC_MESSAGES
+const LC_ALL = __LC_ALL
+const LC_PAPER = __LC_PAPER
+const LC_NAME = __LC_NAME
+const LC_ADDRESS = __LC_ADDRESS
+const LC_TELEPHONE = __LC_TELEPHONE
+const LC_MEASUREMENT = __LC_MEASUREMENT
+const LC_IDENTIFICATION = __LC_IDENTIFICATION
 
 type lconv
 	decimal_point as zstring ptr
@@ -89,23 +89,23 @@ declare function setlocale(byval __category as long, byval __locale as const zst
 declare function localeconv() as lconv ptr
 declare function newlocale(byval __category_mask as long, byval __locale as const zstring ptr, byval __base as __locale_t) as __locale_t
 
-#define LC_CTYPE_MASK (1 shl __LC_CTYPE)
-#define LC_NUMERIC_MASK (1 shl __LC_NUMERIC)
-#define LC_TIME_MASK (1 shl __LC_TIME)
-#define LC_COLLATE_MASK (1 shl __LC_COLLATE)
-#define LC_MONETARY_MASK (1 shl __LC_MONETARY)
-#define LC_MESSAGES_MASK (1 shl __LC_MESSAGES)
-#define LC_PAPER_MASK (1 shl __LC_PAPER)
-#define LC_NAME_MASK (1 shl __LC_NAME)
-#define LC_ADDRESS_MASK (1 shl __LC_ADDRESS)
-#define LC_TELEPHONE_MASK (1 shl __LC_TELEPHONE)
-#define LC_MEASUREMENT_MASK (1 shl __LC_MEASUREMENT)
-#define LC_IDENTIFICATION_MASK (1 shl __LC_IDENTIFICATION)
-#define LC_ALL_MASK (((((((((((LC_CTYPE_MASK or LC_NUMERIC_MASK) or LC_TIME_MASK) or LC_COLLATE_MASK) or LC_MONETARY_MASK) or LC_MESSAGES_MASK) or LC_PAPER_MASK) or LC_NAME_MASK) or LC_ADDRESS_MASK) or LC_TELEPHONE_MASK) or LC_MEASUREMENT_MASK) or LC_IDENTIFICATION_MASK)
+const LC_CTYPE_MASK = 1 shl __LC_CTYPE
+const LC_NUMERIC_MASK = 1 shl __LC_NUMERIC
+const LC_TIME_MASK = 1 shl __LC_TIME
+const LC_COLLATE_MASK = 1 shl __LC_COLLATE
+const LC_MONETARY_MASK = 1 shl __LC_MONETARY
+const LC_MESSAGES_MASK = 1 shl __LC_MESSAGES
+const LC_PAPER_MASK = 1 shl __LC_PAPER
+const LC_NAME_MASK = 1 shl __LC_NAME
+const LC_ADDRESS_MASK = 1 shl __LC_ADDRESS
+const LC_TELEPHONE_MASK = 1 shl __LC_TELEPHONE
+const LC_MEASUREMENT_MASK = 1 shl __LC_MEASUREMENT
+const LC_IDENTIFICATION_MASK = 1 shl __LC_IDENTIFICATION
+const LC_ALL_MASK = ((((((((((LC_CTYPE_MASK or LC_NUMERIC_MASK) or LC_TIME_MASK) or LC_COLLATE_MASK) or LC_MONETARY_MASK) or LC_MESSAGES_MASK) or LC_PAPER_MASK) or LC_NAME_MASK) or LC_ADDRESS_MASK) or LC_TELEPHONE_MASK) or LC_MEASUREMENT_MASK) or LC_IDENTIFICATION_MASK
 
 declare function duplocale(byval __dataset as __locale_t) as __locale_t
 declare sub freelocale(byval __dataset as __locale_t)
 declare function uselocale(byval __dataset as __locale_t) as __locale_t
-#define LC_GLOBAL_LOCALE cast(__locale_t, -cast(clong, 1))
+const LC_GLOBAL_LOCALE = cast(__locale_t, -cast(clong, 1))
 
 end extern
